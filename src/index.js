@@ -67,6 +67,7 @@ class Game extends React.Component {
         this.state = {
             history: [{
                 squares: Array(9).fill(null),
+                position: Array(2).fill(null),
             }],
             xIsNext: true,
             stepNumber: 0,
@@ -77,6 +78,7 @@ class Game extends React.Component {
         const history = this.state.history.slice(0, this.state.stepNumber + 1);
         const current = history[history.length - 1];
         const squares = current.squares.slice();
+        const currentPos = calculatePosition(i);
         if(calculateWinner(squares) || squares[i]) {
             return;
         }
@@ -84,6 +86,7 @@ class Game extends React.Component {
         this.setState({
             history: history.concat([{
                 squares: squares,
+                position: currentPos
             }]),
             xIsNext: !this.state.xIsNext,
             stepNumber: history.length,
@@ -108,6 +111,10 @@ class Game extends React.Component {
            return (
                <li key={move}>
                    <button onClick={() => this.jumpTo(move)}>{desc}</button>
+                   <table>
+                       <tr><td>row</td><td>col</td></tr>
+                       <tr><td>{step.position[0]}</td><td>{step.position[1]}</td></tr>
+                   </table>
                </li>
            )
         });
@@ -164,4 +171,20 @@ function calculateWinner(squares) {
         }
     }
     return null;
+}
+
+// helper function to calculate the position of the current check
+function calculatePosition(i) {
+    let col, row;
+    if (i<3) {
+        row = 1;
+        col = i+1;//(i + 3 - 2)
+    } else if (i>=3 && i<6) {
+        row = 2;
+        col = i-2; //(i + 3 - 5)
+    } else if(i>=6 && i<9) {
+        row = 3;
+        col = i-5;//(i + 3 - 8)
+    }
+    return [row, col];
 }
