@@ -6,7 +6,7 @@ import './index.css';
 // instead of extending a component, create a function that takes props and returns what should be rendered
 function Square(props) {
     return (
-        <button className="square" onClick={props.onClick}>
+        <button className={`square ${props.highlighted ? 'highlight':'notwon'} `} onClick={props.onClick}>
             {props.value}
         </button>
     );
@@ -20,8 +20,19 @@ class Board extends React.Component {
                 value={this.props.squares[i]}
                 onClick={() => this.props.onClick(i)}
                 key={key}
+                highlighted={this.highlightWinner(this.props.winnerCombo, i)}
             />
         );
+    }
+
+    highlightWinner(combo, i) {
+        if(combo.length) {
+            for(let j = 0; j < combo.length; j++) {
+                if(combo[j] === i)
+                    return true
+            }
+            return false
+        }
     }
 
     /*handleClick(i) {
@@ -107,6 +118,7 @@ class Game extends React.Component {
         const current = history[this.state.stepNumber];
         const winner = calculateWinner(current.squares);
 
+
         // storing the moves
         let moves = history.map((step, move) => {
            const desc = move ? 'Go to move #' + move : 'Go to game start';
@@ -129,7 +141,7 @@ class Game extends React.Component {
 
         let status;
         if (winner) {
-            status = 'Winner: ' + winner;
+            status = 'Winner: ' + current.squares[winner[0]];
         } else {
             status = 'Next player: ' + (this.state.xIsNext ? 'X': 'O')
         }
@@ -139,7 +151,7 @@ class Game extends React.Component {
                     <Board
                         squares={current.squares}
                         onClick={(i) => this.handleClick(i)}
-
+                        winnerCombo={winner || []}
                     />
                 </div>
                 <div className="game-info">
@@ -176,7 +188,7 @@ function calculateWinner(squares) {
         const [a, b, c] = lines[i];
         // checks if the same player matched any of the winning combinations
         if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-            return squares[a];
+            return lines[i];
         }
     }
     return null;
