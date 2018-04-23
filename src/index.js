@@ -142,6 +142,8 @@ class Game extends React.Component {
         let status;
         if (winner) {
             status = 'Winner: ' + current.squares[winner[0]];
+        } else if (history.length === 10 && this.state.stepNumber===9) {
+            status = 'Draw'
         } else {
             status = 'Next player: ' + (this.state.xIsNext ? 'X': 'O')
         }
@@ -158,6 +160,9 @@ class Game extends React.Component {
                     <div>{status}</div>
                     <div><button onClick={() => this.handleSort()}>Toggle moves sort</button></div>
                     <ol>{moves}</ol>
+                </div>
+                <div>
+                    history: {history.length}
                 </div>
             </div>
         );
